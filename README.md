@@ -110,12 +110,12 @@ This repository demonstrates a full-stack architecture with hands-on examples ac
 
 | App Section               | Screenshot                                                   |
 |---------------------------|-------------------------------------------------------------|
-| **Angular Frontend**      | ![Angular Screenshot](./Screenshots/angular-frontend.png)   |
-| **Spring Boot Backend**   | ![SpringBoot Screenshot](./screenshots/springboot-backend.png) |
-| **PostgreSQL Admin**      | ![PostgreSQL Screenshot](./screenshots/postgresql-admin.png) |
-| **Spring Boot Admin**     | ![SpringBoot Admin](./screenshots/springboot-admin.png)     |
-| **ActiveMQ Listener**     | ![ActiveMQ Screenshot](./screenshots/activemq-listener.png) |
-| **ShellScript Demos**     | ![ShellScript Screenshot](./screenshots/shellscript-demo.png) |
+| **Angular Frontend**      | ![Angular Screenshot](./Screenshots/HomePage.png)   |
+| **Spring Boot Backend**   | ![SpringBoot Screenshot](./Screenshots/SpringBoot.png) |
+| **PostgreSQL Admin**      | ![PostgreSQL Screenshot](./Screenshots/PgAdmin.png) |
+| **Spring Boot Admin**     | ![SpringBoot Admin](./Screenshots/SpringBootAdmin.png)     |
+| **ActiveMQ Listener**     | ![ActiveMQ Screenshot](./Screenshots/ActiveMQ.png) |
+| **ShellScript Demos**     | ![ShellScript Screenshot](./Screenshots/ShellScript.png) |
 
 ---
 
