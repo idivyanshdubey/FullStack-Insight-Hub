@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: activemqListener
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+
+server:
+  port: 8082

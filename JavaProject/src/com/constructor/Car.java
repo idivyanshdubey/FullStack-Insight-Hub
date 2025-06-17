@@ -1,0 +1,52 @@
+package com.constructor;
+
+import java.util.Scanner;
+import java.util.logging.*;
+
+public class Car {
+    private static final Logger logger = Logger.getLogger(Car.class.getName());
+
+    String color;
+
+    // Default constructor
+    Car() {
+        logger.info("Default constructor called.");
+    }
+
+    // Parameterized constructor
+    Car(String color) {
+        this.color = color; // Correct assignment using 'this'
+        logger.info("Parameterized constructor called with color: " + color);
+    }
+
+    void display() {
+        System.out.println("The car color is: " + color);
+        logger.info("display() method called. Color: " + color);
+    }
+
+    public static void main(String[] args) {
+        setupLogger();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the color of the car: ");
+        String inputColor = scanner.nextLine();
+
+        Car myCar = new Car(inputColor);
+        myCar.display();
+
+        scanner.close();
+    }
+
+    private static void setupLogger() {
+        try {
+            LogManager.getLogManager().reset();
+            FileHandler fh = new FileHandler("core_java_programs.log", true);
+            fh.setFormatter(new SimpleFormatter());
+            Logger rootLogger = Logger.getLogger("");
+            rootLogger.addHandler(fh);
+            rootLogger.setLevel(Level.INFO);
+        } catch (Exception e) {
+            System.err.println("Logger setup failed: " + e.getMessage());
+        }
+    }
+}

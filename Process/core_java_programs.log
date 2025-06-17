@@ -1,0 +1,58 @@
+Jun 01, 2025 4:48:10 PM com.abstraction.Exmp main
+INFO: Program started.
+Jun 01, 2025 4:48:16 PM com.abstraction.Exmp main
+INFO: User selected option: 1
+Jun 01, 2025 4:48:16 PM com.abstraction.Dog eat
+INFO: Dog is eating.
+Jun 01, 2025 4:48:29 PM com.abstraction.Exmp main
+INFO: User selected option: 2
+Jun 01, 2025 4:48:29 PM com.abstraction.Dog sleep
+INFO: Dog is sleeping.
+Jun 01, 2025 4:48:33 PM com.abstraction.Exmp main
+INFO: User selected option: 5
+Jun 01, 2025 4:48:33 PM com.abstraction.Exmp main
+INFO: Program exited by user.
+Jun 01, 2025 4:48:33 PM com.annotation.CustomAnnotationExample main
+INFO: Program started.
+Jun 01, 2025 4:48:40 PM com.annotation.CustomAnnotationExample main
+INFO: Method 'display' found.
+Jun 01, 2025 4:48:40 PM com.annotation.CustomAnnotationExample main
+INFO: Annotation value accessed: Custom Message
+Jun 01, 2025 4:48:40 PM com.annotation.CustomAnnotationExample display
+INFO: display() method executed.
+Jun 01, 2025 4:48:41 PM com.array.Binary1D main
+INFO: Program started.
+Jun 01, 2025 4:48:49 PM com.array.Binary1D main
+INFO: User entered array: [1, 4]
+Jun 01, 2025 4:48:49 PM com.array.Binary1D main
+INFO: Sorted array: [1, 4]
+Jun 01, 2025 4:48:52 PM com.array.Binary1D main
+INFO: User wants to search for: 4
+Jun 01, 2025 4:48:52 PM com.array.Binary1D main
+INFO: Element found at index: 1
+Jun 01, 2025 4:48:52 PM com.array.BinarySearchExample main
+INFO: Program started.
+Jun 01, 2025 11:08:08 PM com.abstraction.Exmp main
+INFO: Program started.
+Jun 01, 2025 11:10:26 PM com.abstraction.Exmp main
+INFO: User selected option: 5
+Jun 01, 2025 11:10:26 PM com.abstraction.Exmp main
+INFO: Program exited by user.
+Jun 01, 2025 11:10:27 PM com.annotation.CustomAnnotationExample main
+INFO: Program started.
+Jun 01, 2025 11:10:31 PM com.annotation.CustomAnnotationExample main
+WARNING: No such method: 5
+Jun 01, 2025 11:10:32 PM com.array.Binary1D main
+INFO: Program started.
+Jun 01, 2025 11:18:05 PM com.array.Binary1D main
+INFO: Program started.
+Jun 01, 2025 11:18:58 PM com.map.HashMap1 main
+INFO: Initial map: {1=Alice, 2=Bob, 3=Charlie}
+Jun 01, 2025 11:19:55 PM com.abstraction.Exmp main
+INFO: Program started.
+Jun 01, 2025 11:20:00 PM com.abstraction.Exmp main
+INFO: User selected option: 5
+Jun 01, 2025 11:20:00 PM com.abstraction.Exmp main
+INFO: Program exited by user.
+Jun 01, 2025 11:20:01 PM com.annotation.CustomAnnotationExample main
+INFO: Program started.

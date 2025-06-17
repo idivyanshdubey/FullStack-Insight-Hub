@@ -1,0 +1,291 @@
+<div class="employee-container">
+  <div class="header">
+    <h1>Employee Management</h1>
+    <div class="header-actions">
+      <button class="add-btn" (click)="openAddForm()">Add New Employee</button>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Search Section -->
+  <div class="search-container" *ngIf="!showForm">
+    <div class="search-box">
+      <span class="material-icons search-icon">search</span>
+      <input 
+        type="text" 
+        placeholder="Search employees by name, age, or gender..." 
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        class="search-input">
+      <button 
+        *ngIf="searchTerm" 
+        class="clear-search-btn" 
+        (click)="clearSearch()"
+        title="Clear search">
+        <span class="material-icons">clear</span>
+      </button>
+    </div>
+    <div class="search-filters">
+      <select [(ngModel)]="genderFilter" (change)="onSearch()" class="filter-select">
+        <option value="">All Genders</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+      <select [(ngModel)]="ageRangeFilter" (change)="onSearch()" class="filter-select">
+        <option value="">All Ages</option>
+        <option value="18-25">18-25</option>
+        <option value="26-35">26-35</option>
+        <option value="36-45">36-45</option>
+        <option value="46-60">46-60</option>
+        <option value="60+">60+</option>
+      </select>
+    </div>
+    <div class="search-results-info" *ngIf="searchTerm || genderFilter || ageRangeFilter">
+      <span>Showing {{ filteredEmployees.length }} of {{ employees.length }} employees</span>
+      <button class="clear-filters-btn" (click)="clearAllFilters()">Clear All Filters</button>
+    </div>
+  </div>
+
+  <!-- Employee Form -->
+  <div class="form-container" *ngIf="showForm">
+    <h2>{{ isEditing ? 'Edit Employee' : 'Add New Employee' }}</h2>
+    <form [formGroup]="employeeForm" (ngSubmit)="submitForm()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" formControlName="name">
+        <div class="error" *ngIf="employeeForm.get('name')?.invalid && employeeForm.get('name')?.touched">
+          Name is required
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input type="number" id="age" formControlName="age">
+        <div class="error" *ngIf="employeeForm.get('age')?.invalid && employeeForm.get('age')?.touched">
+          <span *ngIf="employeeForm.get('age')?.errors?.['required']">Age is required</span>
+          <span *ngIf="employeeForm.get('age')?.errors?.['min']">Age must be at least 18</span>
+          <span *ngIf="employeeForm.get('age')?.errors?.['max']">Age must be less than 100</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select id="gender" formControlName="gender">
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+        <div class="error" *ngIf="employeeForm.get('gender')?.invalid && employeeForm.get('gender')?.touched">
+          Gender is required
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" [disabled]="employeeForm.invalid">{{ isEditing ? 'Update' : 'Save' }}</button>
+        <button type="button" (click)="cancelForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Employee Table -->
+  <div class="table-container" *ngIf="filteredEmployees.length > 0; else noEmployees">
+    <div class="table-header">
+      <h3>Employee List ({{ filteredEmployees.length }})</h3>
+      <div class="view-options">
+        <button 
+          class="view-toggle-btn" 
+          [class.active]="viewMode === 'table'"
+          (click)="setViewMode('table')">
+          <span class="material-icons">table_view</span>
+          Table
+        </button>
+        <button 
+          class="view-toggle-btn" 
+          [class.active]="viewMode === 'card'"
+          (click)="setViewMode('card')">
+          <span class="material-icons">view_module</span>
+          Cards
+        </button>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div *ngIf="viewMode === 'table'" class="table-view">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of filteredEmployees">
+            <td>{{employee.id}}</td>
+            <td>{{employee.name}}</td>
+            <td>{{employee.age}}</td>
+            <td>{{employee.gender}}</td>
+            <td class="actions">
+              <button class="view-btn" (click)="viewEmployee(employee)" title="View Details">
+                <span class="material-icons">visibility</span>
+              </button>
+              <button class="edit-btn" (click)="openEditForm(employee)" title="Edit">
+                <span class="material-icons">edit</span>
+              </button>
+              <button class="delete-btn" (click)="deleteEmployee(+employee.id)" title="Delete">
+                <span class="material-icons">delete</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Card View -->
+    <div *ngIf="viewMode === 'card'" class="card-view">
+      <div class="employee-card" *ngFor="let employee of filteredEmployees">
+        <div class="card-header">
+          <h4>{{employee.name}}</h4>
+          <span class="employee-id">#{{employee.id}}</span>
+        </div>
+        <div class="card-content">
+          <div class="card-info">
+            <span class="material-icons">cake</span>
+            <span>{{employee.age}} years old</span>
+          </div>
+          <div class="card-info">
+            <span class="material-icons">person</span>
+            <span>{{employee.gender}}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="view-btn" (click)="viewEmployee(employee)" title="View Details">
+            <span class="material-icons">visibility</span>
+          </button>
+          <button class="edit-btn" (click)="openEditForm(employee)" title="Edit">
+            <span class="material-icons">edit</span>
+          </button>
+          <button class="delete-btn" (click)="deleteEmployee(+employee.id)" title="Delete">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Details Modal -->
+  <div class="modal-overlay" *ngIf="showEmployeeDetails" (click)="closeEmployeeDetails()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Employee Details</h3>
+        <button class="close-btn" (click)="closeEmployeeDetails()">
+          <span class="material-icons">close</span>
+        </button>
+      </div>
+      <div class="modal-body" *ngIf="selectedEmployee">
+        <div class="detail-row">
+          <label>ID:</label>
+          <span>{{selectedEmployee.id}}</span>
+        </div>
+        <div class="detail-row">
+          <label>Name:</label>
+          <span>{{selectedEmployee.name}}</span>
+        </div>
+        <div class="detail-row">
+          <label>Age:</label>
+          <span>{{selectedEmployee.age}} years old</span>
+        </div>
+        <div class="detail-row">
+          <label>Gender:</label>
+          <span>{{selectedEmployee.gender}}</span>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="edit-btn" (click)="editFromDetails()">
+          <span class="material-icons">edit</span>
+          Edit Employee
+        </button>
+        <button class="close-btn" (click)="closeEmployeeDetails()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Upload Section -->
+  <div class="upload-section" *ngIf="!showForm">
+    <div class="upload-card">
+      <h3>
+        <span class="material-icons">cloud_upload</span>
+        Upload Employee Data
+      </h3>
+      <p>Upload a CSV or Excel file containing employee information</p>
+      
+      <div class="file-upload-container">
+        <input 
+          type="file"
+          #fileInput
+          id="fileInput"
+          accept=".csv,.xlsx,.xls"
+          (change)="onFileSelected($event)"
+          [disabled]="isUploading"
+          style="display: none;">
+        
+        <button 
+          class="file-select-btn"
+          (click)="fileInput.click()"
+          [disabled]="isUploading">
+          <span class="material-icons">attach_file</span>
+          Choose File
+        </button>
+        
+        <div class="selected-file-info" *ngIf="selectedFile">
+          <span class="file-name">
+            <span class="material-icons">description</span>
+            {{ selectedFile.name }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="upload-actions" *ngIf="selectedFile">
+        <button 
+          class="upload-btn"
+          (click)="uploadFile()"
+          [disabled]="isUploading">
+          <span class="material-icons" *ngIf="!isUploading">cloud_upload</span>
+          <span class="material-icons spinning" *ngIf="isUploading">refresh</span>
+          {{ isUploading ? 'Uploading...' : 'Upload File' }}
+        </button>
+      </div>
+      
+      <div class="upload-info">
+        <small>
+          <span class="material-icons">info</span>
+          Supported formats: CSV, Excel (.xlsx, .xls). Maximum file size: 5MB
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download Section -->
+  <div class="download-section" *ngIf="!showForm && employees.length > 0">
+    <button (click)="downloadEmployeesCsv()" class="download-btn">
+      <span class="material-icons">description</span>
+      Download CSV
+    </button>
+    <button (click)="downloadTemplate()" class="template-btn">
+      <span class="material-icons">download</span>
+      Download Template
+    </button>
+  </div>
+
+  <ng-template #noEmployees>
+    <div class="no-data">
+      <span class="material-icons">people_outline</span>
+      <p *ngIf="!searchTerm && !genderFilter && !ageRangeFilter">No employees found. Add a new employee to get started.</p>
+      <p *ngIf="searchTerm || genderFilter || ageRangeFilter">No employees match your search criteria.</p>
+      <button *ngIf="searchTerm || genderFilter || ageRangeFilter" class="clear-filters-btn" (click)="clearAllFilters()">
+        Clear Filters
+      </button>
+    </div>
+  </ng-template>
+</div>

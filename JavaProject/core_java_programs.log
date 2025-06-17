@@ -1,0 +1,102 @@
+May 30, 2025 10:09:48 PM com.arraylist.RemoveDuplicates main
+INFO: Program started.
+May 30, 2025 10:10:11 PM com.arraylist.RemoveDuplicates main
+INFO: Added character: a
+May 30, 2025 10:10:14 PM com.arraylist.RemoveDuplicates main
+INFO: Added character: h
+May 30, 2025 10:10:17 PM com.arraylist.RemoveDuplicates main
+INFO: Added character: b
+May 30, 2025 10:10:21 PM com.arraylist.RemoveDuplicates main
+INFO: Added character: k
+May 30, 2025 10:10:21 PM com.arraylist.RemoveDuplicates main
+INFO: Original list: [a, h, b, k]
+May 30, 2025 10:10:21 PM com.arraylist.RemoveDuplicates main
+INFO: List after removing duplicates: [a, b, h, k]
+May 30, 2025 10:11:45 PM com.arraylist.SortingExmp main
+INFO: Program started.
+May 30, 2025 10:11:51 PM com.arraylist.SortingExmp main
+INFO: Added: apple
+May 30, 2025 10:11:57 PM com.arraylist.SortingExmp main
+INFO: Added: amazon
+May 30, 2025 10:11:59 PM com.arraylist.SortingExmp main
+INFO: Added: bannana
+May 30, 2025 10:11:59 PM com.arraylist.SortingExmp main
+INFO: Original list: [apple, amazon, bannana]
+May 30, 2025 10:11:59 PM com.arraylist.SortingExmp main
+INFO: Sorted list: [amazon, apple, bannana]
+May 30, 2025 10:17:51 PM com.inhertance.Main main
+INFO: Main method started.
+May 30, 2025 10:17:51 PM com.inhertance.Vehicle <init>
+INFO: Vehicle constructor called. Speed set to 50
+May 30, 2025 10:17:51 PM com.inhertance.Car1 <init>
+INFO: Car1 constructor called. Speed set to 100
+May 30, 2025 10:17:51 PM com.inhertance.Car1 display
+INFO: Display method called.
+May 30, 2025 10:17:51 PM com.inhertance.Car1 display
+INFO: Displayed Parent Speed: 50, Child Speed: 100
+May 30, 2025 10:17:51 PM com.inhertance.Main main
+INFO: Main method completed.
+May 30, 2025 10:27:04 PM com.loops.Dowhiles main
+INFO: User selected option: 1
+May 30, 2025 10:27:04 PM com.loops.Dowhiles main
+INFO: Executing Option A
+May 30, 2025 10:35:28 PM com.operators.Arthmetic main
+INFO: Program started
+May 30, 2025 10:35:31 PM com.operators.Arthmetic main
+INFO: First number entered: 4
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Second number entered: 5
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Addition: 9
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Subtraction: -1
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Multiplication: 20
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Division: 0
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Modulo: 4
+May 30, 2025 10:35:32 PM com.operators.Arthmetic main
+INFO: Program completed
+May 30, 2025 10:37:28 PM com.loops.Fors main
+INFO: Fors program started.
+May 30, 2025 10:37:32 PM com.loops.Fors main
+INFO: Number: 4
+May 30, 2025 10:37:32 PM com.loops.Fors main
+INFO: Number: 5
+May 30, 2025 10:37:32 PM com.loops.Fors main
+INFO: Fors program ended.
+May 30, 2025 10:37:56 PM com.operators.Logical main
+INFO: Logical program started
+May 30, 2025 10:38:03 PM com.operators.Logical main
+INFO: User entered x = true
+May 30, 2025 10:38:05 PM com.operators.Logical main
+INFO: User entered y = true
+May 30, 2025 10:38:05 PM com.operators.Logical main
+INFO: x && y = true
+May 30, 2025 10:38:05 PM com.operators.Logical main
+INFO: x || y = true
+May 30, 2025 10:38:05 PM com.operators.Logical main
+INFO: !x = false
+May 30, 2025 10:38:05 PM com.operators.Logical main
+INFO: Logical program completed
+May 30, 2025 10:39:02 PM com.string.Example main
+INFO: User input: helloji
+May 30, 2025 10:39:02 PM com.string.Example main
+INFO: Vowels extracted: eoi
+May 30, 2025 10:42:09 PM com.trycatchfinally.Cons main
+INFO: Cons program started.
+May 30, 2025 10:42:13 PM com.trycatchfinally.Cons main
+INFO: Division successful. Result: 0
+May 30, 2025 10:42:13 PM com.trycatchfinally.Cons main
+INFO: Cons program ended.
+May 30, 2025 10:42:21 PM com.trycatchfinally.Cons main
+INFO: Cons program started.
+May 30, 2025 10:42:24 PM com.trycatchfinally.Cons main
+INFO: Division successful. Result: 20
+May 30, 2025 10:42:24 PM com.trycatchfinally.Cons main
+INFO: Cons program ended.
+May 30, 2025 10:43:15 PM com.viva.Hello main
+INFO: Hello program started.
+May 30, 2025 10:43:15 PM com.viva.Hello main
+INFO: Printed 'hello' to console.

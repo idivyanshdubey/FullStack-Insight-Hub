@@ -1,0 +1,156 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <div class="signup-header">
+      <div class="logo">
+        <span class="material-icons">business</span>
+      </div>
+      <h1>Create Account</h1>
+      <p>Join us to manage your employees efficiently</p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+      <div class="name-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <div class="input-container">
+            <span class="material-icons input-icon">person</span>
+            <input
+              type="text"
+              id="firstName"
+              formControlName="firstName"
+              placeholder="Enter first name"
+              [class.error]="isFieldInvalid('firstName')"
+              autocomplete="given-name">
+          </div>
+          <div class="error-message" *ngIf="isFieldInvalid('firstName')">
+            {{ getErrorMessage('firstName') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <div class="input-container">
+            <span class="material-icons input-icon">person</span>
+            <input
+              type="text"
+              id="lastName"
+              formControlName="lastName"
+              placeholder="Enter last name"
+              [class.error]="isFieldInvalid('lastName')"
+              autocomplete="family-name">
+          </div>
+          <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+            {{ getErrorMessage('lastName') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-container">
+          <span class="material-icons input-icon">account_circle</span>
+          <input
+            type="text"
+            id="username"
+            formControlName="username"
+            placeholder="Choose a username"
+            [class.error]="isFieldInvalid('username')"
+            autocomplete="username">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('username')">
+          {{ getErrorMessage('username') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <div class="input-container">
+          <span class="material-icons input-icon">email</span>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.error]="isFieldInvalid('email')"
+            autocomplete="email">
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('email')">
+          {{ getErrorMessage('email') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-container">
+          <span class="material-icons input-icon">lock</span>
+          <input
+            [type]="hidePassword ? 'password' : 'text'"
+            id="password"
+            formControlName="password"
+            placeholder="Create a password"
+            [class.error]="isFieldInvalid('password')"
+            autocomplete="new-password">
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            tabindex="-1">
+            <span class="material-icons">
+              {{ hidePassword ? 'visibility' : 'visibility_off' }}
+            </span>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('password')">
+          {{ getErrorMessage('password') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-container">
+          <span class="material-icons input-icon">lock</span>
+          <input
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+            [class.error]="isFieldInvalid('confirmPassword')"
+            autocomplete="new-password">
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="toggleConfirmPasswordVisibility()"
+            tabindex="-1">
+            <span class="material-icons">
+              {{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}
+            </span>
+          </button>
+        </div>
+        <div class="error-message" *ngIf="isFieldInvalid('confirmPassword')">
+          {{ getErrorMessage('confirmPassword') }}
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="signup-btn"
+        [disabled]="signupForm.invalid || isLoading">
+        <span class="material-icons" *ngIf="isLoading">refresh</span>
+        <span class="material-icons" *ngIf="!isLoading">person_add</span>
+        {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+      </button>
+
+      <div class="divider">
+        <span>or</span>
+      </div>
+
+      <button 
+        type="button" 
+        class="login-link-btn"
+        (click)="navigateToLogin()">
+        <span class="material-icons">login</span>
+        Already have an account? Sign In
+      </button>
+    </form>
+  </div>
+</div>

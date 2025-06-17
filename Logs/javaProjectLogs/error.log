@@ -1,0 +1,4 @@
+C:\WorkSpace\javaProject\src\com\memorymanagement\GarbageCollectionExample.java:25: warning: [removal] finalize() in Object has been deprecated and marked for removal
+    protected void finalize() {
+                   ^
+1 warning
