@@ -1,15 +1,10 @@
 #!/bin/bash
 
 # Set Java JDK path using verified short path
-export JAVA_HOME="/c/PROGRA~1/ECLIPS~1/JDK-21~1.7-H"
-export PATH="$JAVA_HOME/bin:$PATH"
+
 
 # Set base paths
-SRC_DIR="/c/WorkSpace/javaProject/src/com"
-CLASS_DIR="/c/WorkSpace/javaProject/temp_classes"
-LOG_DIR="/c/WorkSpace/Logs/javaProjectLogs"
-SUCCESS_LOG="$LOG_DIR/success.log"
-ERROR_LOG="$LOG_DIR/error.log"
+
 
 # Create necessary directories
 mkdir -p "$CLASS_DIR"
