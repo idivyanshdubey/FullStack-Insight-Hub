@@ -4,7 +4,7 @@ spring:
   boot:
     admin:
       client:
-        url: "http://localhost:8081"
+        url: http://localhost:8081 # Replace with actual Spring Boot Admin server URL
   activemq:
     broker-url: tcp://localhost:61616
     user: admin
@@ -20,6 +20,16 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 server:
   port: 8080
