@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set paths
-SRC_DIR="/c/WorkSpace/pythonProject"
-LOG_DIR="/c/WorkSpace/Logs/pythonProjectLogs"
+SRC_DIR="/c/"
+LOG_DIR="/c/"
 SUCCESS_LOG="$LOG_DIR/success.log"
 ERROR_LOG="$LOG_DIR/error.log"
 
