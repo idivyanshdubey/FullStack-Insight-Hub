@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SRC_DIR="/c/WorkSpace/ShellScriptProject"
-LOG_DIR="/c/WorkSpace/Logs/shellScriptProjectLogs"
+SRC_DIR="/c/"
+LOG_DIR="/c/"
 SUCCESS_LOG="$LOG_DIR/success.log"
 ERROR_LOG="$LOG_DIR/error.log"
 
