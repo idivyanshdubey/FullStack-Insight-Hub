@@ -1,35 +1,41 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
-from pyspark.sql.types import DoubleType, IntegerType
+from pyspark.sql.functions import expr, col
+from pyspark.sql.types import DoubleType
+
 # Create SparkSession
 spark = SparkSession.builder \
-          .appName('SparkByExamples.com') \
+          .appName('EmployeeSalaryCastingApp') \
           .getOrCreate()
 
-simpleData = [("James","34","true","M","3000.6089"),
-    ("Michael","33","true","F","3300.8067"),
-    ("Robert","37","false","M","5000.5034")
-  ]
+# Sample data
+data = [
+    ("Riya", "29", "true", "F", "4200.7589"),
+    ("Karan", "31", "true", "M", "3900.8067"),
+    ("Neha", "35", "false", "F", "5100.5034")
+]
 
-columns = ["firstname","age","isGraduated","gender","salary"]
-df = spark.createDataFrame(data = simpleData, schema = columns)
+columns = ["firstname", "age", "isCertified", "gender", "salary"]
+
+# Create DataFrame
+df = spark.createDataFrame(data=data, schema=columns)
 df.printSchema()
 df.show(truncate=False)
 
-from pyspark.sql.functions import col,round,expr
-df.withColumn("salary",df.salary.cast('double')).printSchema()    
-df.withColumn("salary",df.salary.cast(DoublerType())).printSchema()    
-df.withColumn("salary",col("salary").cast('double')).printSchema()    
+# Cast salary to double using different methods
+df1 = df.withColumn("salary", df.salary.cast(DoubleType()))
+df1.printSchema()
 
-#df.withColumn("salary",round(df.salary.cast(DoubleType()),2)).show(truncate=False).printSchema()    
-df.selectExpr("firstname","isGraduated","cast(salary as double) salary").printSchema()    
+# Using selectExpr for casting
+df2 = df.selectExpr("firstname", "isCertified", "cast(salary as double) as salary")
+df2.printSchema()
 
-df.createOrReplaceTempView("CastExample")
-spark.sql("SELECT firstname,isGraduated,DOUBLE(salary) as salary from CastExample").printSchema()
+# Using SQL for casting
+df.createOrReplaceTempView("EmployeeData")
+df3 = spark.sql("SELECT firstname, isCertified, DOUBLE(salary) as salary FROM EmployeeData")
+df3.printSchema()
+df3.show(truncate=False)
 
-
-#df.select("firstname",expr(df.age),"isGraduated",col("salary").cast('float').alias("salary")).show()
+# Optional: Cast age and salary together
+df.select("firstname", expr("cast(age as int)"), "isCertified", col("salary").cast("float").alias("salary")).show(truncate=False)

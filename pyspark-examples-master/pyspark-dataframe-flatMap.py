@@ -1,20 +1,22 @@
-# -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
 
-columns = ["name","languagesAtSchool","currentState"]
-data = [("James,,Smith",["Java","Scala","C++"],"CA"), \
-    ("Michael,Rose,",["Spark","Java","C++"],"NJ"), \
-    ("Robert,,Williams",["CSharp","VB"],"NV")]
+# Initialize Spark session
+session = SparkSession.builder.appName('LanguageMappingApp').getOrCreate()
 
-df = spark.createDataFrame(data=data,schema=columns)
-df.printSchema()
-df.show(truncate=False)
+# Define schema and data
+fields = ["full_name", "school_languages", "region"]
+records = [("Riya,,Sharma", ["Python", "SQL", "Java"], "TX"),
+           ("Karan,Mehta,", ["Spark", "Python", "JavaScript"], "WA"),
+           ("Neha,,Verma", ["Go", "Rust"], "OR")]
 
-#Flatmap    
+# Create DataFrame
+df_lang = session.createDataFrame(data=records, schema=fields)
+df_lang.printSchema()
+df_lang.show(truncate=False)
 
+# FlatMap logic using RDD
+flattened_rdd = df_lang.rdd.flatMap(lambda row: [(row['full_name'], lang, row['region']) for lang in row['school_languages']])
+flattened_df = flattened_rdd.toDF(["full_name", "language", "region"])
+flattened_df.show(truncate=False)

@@ -1,30 +1,34 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
-import pyspark
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+# Initialize Spark session
+spark = SparkSession.builder.appName('DepartmentInfoApp').getOrCreate()
 
-dept = [("Finance",10), \
-    ("Marketing",20), \
-    ("Sales",30), \
-    ("IT",40) \
-  ]
-deptColumns = ["dept_name","dept_id"]
-deptDF = spark.createDataFrame(data=dept, schema = deptColumns)
-deptDF.printSchema()
-deptDF.show(truncate=False)
+# Sample data
+departments = [
+    ("Human Resources", 101),
+    ("Engineering", 102),
+    ("Operations", 103),
+    ("Support", 104)
+]
 
-dataCollect = deptDF.collect()
+# Column names
+dept_columns = ["department_name", "department_id"]
 
-print(dataCollect)
+# Create DataFrame
+dept_df = spark.createDataFrame(data=departments, schema=dept_columns)
+dept_df.printSchema()
+dept_df.show(truncate=False)
 
-dataCollect2 = deptDF.select("dept_name").collect()
-print(dataCollect2)
+# Collect full rows
+collected_data = dept_df.collect()
+print(collected_data)
 
-for row in dataCollect:
-    print(row['dept_name'] + "," +str(row['dept_id']))
+# Collect specific column
+collected_names = dept_df.select("department_name").collect()
+print(collected_names)
 
+# Iterate and print formatted output
+for row in collected_data:
+    print(f"{row['department_name']}, {row['department_id']}")

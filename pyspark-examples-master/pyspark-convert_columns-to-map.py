@@ -1,33 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
+
 
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark.sql.functions import col, lit, create_map
 
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
-data = [ ("36636","Finance",3000,"USA"), 
-    ("40288","Finance",5000,"IND"), 
-    ("42114","Sales",3900,"USA"), 
-    ("39192","Marketing",2500,"CAN"), 
-    ("34534","Sales",6500,"USA") ]
+# Initialize Spark session
+spark = SparkSession.builder.appName('EmployeeMapApp').getOrCreate()
+
+# Sample data
+records = [
+    ("E101", "HR", 4200, "UK"),
+    ("E102", "Engineering", 5800, "IND"),
+    ("E103", "Sales", 3900, "USA"),
+    ("E104", "Support", 2700, "CAN"),
+    ("E105", "Sales", 6100, "USA")
+]
+
+# Define schema
 schema = StructType([
-     StructField('id', StringType(), True),
-     StructField('dept', StringType(), True),
-     StructField('salary', IntegerType(), True),
-     StructField('location', StringType(), True)
-     ])
+    StructField("emp_id", StringType(), True),
+    StructField("department", StringType(), True),
+    StructField("income", IntegerType(), True),
+    StructField("country", StringType(), True)
+])
 
-df = spark.createDataFrame(data=data,schema=schema)
+# Create DataFrame
+df = spark.createDataFrame(data=records, schema=schema)
 df.printSchema()
 df.show(truncate=False)
 
-#Convert scolumns to Map
-from pyspark.sql.functions import col,lit,create_map
-df = df.withColumn("propertiesMap",create_map(
-        lit("salary"),col("salary"),
-        lit("location"),col("location")
-        )).drop("salary","location")
-df.printSchema()
-df.show(truncate=False)
+# Convert selected columns to a map
+df_mapped = df.withColumn("infoMap", create_map(
+    lit("income"), col("income"),
+    lit("country"), col("country")
+)).drop("income", "country")
+
+df_mapped.printSchema()
+df_mapped.show(truncate=False)

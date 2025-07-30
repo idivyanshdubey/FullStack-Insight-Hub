@@ -1,37 +1,38 @@
 # -*- coding: utf-8 -*-
-'''
-Created on Sat Jan 11 19:38:27 2020
 
-@author: sparkbyexamples.com
-'''
-
-import pyspark
 from pyspark.sql import SparkSession
 
+# Initialize Spark session
+spark = SparkSession.builder.appName('LocationMappingApp').getOrCreate()
 
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+# Dictionary to broadcast
+location_map = {"TX": "Texas", "WA": "Washington", "OR": "Oregon"}
+broadcast_locations = spark.sparkContext.broadcast(location_map)
 
-states = {"NY":"New York", "CA":"California", "FL":"Florida"}
-broadcastStates = spark.sparkContext.broadcast(states)
+# Sample data
+records = [
+    ("Riya", "Sharma", "USA", "TX"),
+    ("Karan", "Mehta", "USA", "WA"),
+    ("Neha", "Verma", "USA", "TX"),
+    ("Amit", "Patel", "USA", "OR")
+]
 
-data = [("James","Smith","USA","CA"),
-    ("Michael","Rose","USA","NY"),
-    ("Robert","Williams","USA","CA"),
-    ("Maria","Jones","USA","FL")
-  ]
+# Column names
+columns = ["first_name", "last_name", "country", "state_code"]
 
-columns = ["firstname","lastname","country","state"]
-df = spark.createDataFrame(data = data, schema = columns)
+# Create DataFrame
+df = spark.createDataFrame(data=records, schema=columns)
 df.printSchema()
 df.show(truncate=False)
 
-def state_convert(code):
-    return broadcastStates.value[code]
+# Function to convert state code to full name using broadcast variable
+def convert_state(code):
+    return broadcast_locations.value.get(code, "Unknown")
 
-result = df.rdd.map(lambda x: (x[0],x[1],x[2],state_convert(x[3]))).toDF(columns)
-result.show(truncate=False)
+# Apply transformation using RDD
+converted_df = df.rdd.map(lambda row: (row[0], row[1], row[2], convert_state(row[3]))).toDF(columns)
+converted_df.show(truncate=False)
 
-# Broadcast variable on filter
-
-filteDf= df.where((df['state'].isin(broadcastStates.value)))
-
+# Filter using broadcast variable
+filtered_df = df.where(df['state_code'].isin(broadcast_locations.value))
+filtered_df.show(truncate=False)

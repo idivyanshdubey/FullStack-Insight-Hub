@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import current_date, current_timestamp, date_format
 
-# Create SparkSession
-spark = SparkSession.builder \
-               .appName('SparkByExamples.com') \
-               .getOrCreate()
+# Initialize Spark session
+spark = SparkSession.builder.appName('DateFormatDemoApp').getOrCreate()
 
-from pyspark.sql.functions import *
+# Sample data
+data = [["A001"]]
+df = spark.createDataFrame(data, ["record_id"])
 
-df=spark.createDataFrame([["1"]],["id"])
-df.select(current_date().alias("current_date"), \
-      date_format(current_date(),"yyyy MM dd").alias("yyyy MM dd"), \
-      date_format(current_timestamp(),"MM/dd/yyyy hh:mm").alias("MM/dd/yyyy"), \
-      date_format(current_timestamp(),"yyyy MMM dd").alias("yyyy MMMM dd"), \
-      date_format(current_timestamp(),"yyyy MMMM dd E").alias("yyyy MMMM dd E") \
-   ).show()
+# Format current date and timestamp
+df.select(
+    current_date().alias("today"),
+    date_format(current_date(), "dd-MM-yyyy").alias("formatted_date"),
+    date_format(current_timestamp(), "dd/MM/yyyy HH:mm").alias("formatted_timestamp"),
+    date_format(current_timestamp(), "yyyy MMM dd").alias("month_day_format"),
+    date_format(current_timestamp(), "yyyy MMMM dd E").alias("full_format")
+).show(truncate=False)
 
-#SQL
-
-spark.sql("select current_date() as current_date, "+
-      "date_format(current_timestamp(),'yyyy MM dd') as yyyy_MM_dd, "+
-      "date_format(current_timestamp(),'MM/dd/yyyy hh:mm') as MM_dd_yyyy, "+
-      "date_format(current_timestamp(),'yyyy MMM dd') as yyyy_MMMM_dd, "+
-      "date_format(current_timestamp(),'yyyy MMMM dd E') as yyyy_MMMM_dd_E").show()
+# SQL version
+spark.sql("""
+    SELECT 
+        current_date() AS today,
+        date_format(current_timestamp(), 'dd-MM-yyyy') AS formatted_date,
+        date_format(current_timestamp(), 'dd/MM/yyyy HH:mm') AS formatted_timestamp,
+        date_format(current_timestamp(), 'yyyy MMM dd') AS month_day_format,
+        date_format(current_timestamp(), 'yyyy MMMM dd E') AS full_format
+""").show(truncate=False)

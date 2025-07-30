@@ -1,51 +1,42 @@
 # -*- coding: utf-8 -*-
-'''
-Created on Sat Jan 11 19:38:27 2020
 
-@author: sparkbyexamples.com
-'''
-
-import pyspark
 from pyspark.sql import SparkSession, Row
-from pyspark.sql.types import StructType,StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType
 
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+# Initialize Spark session
+spark = SparkSession.builder.appName('TeamInfoApp').getOrCreate()
 
-#Using List
-dept = [("Finance",10), 
-        ("Marketing",20), 
-        ("Sales",30), 
-        ("IT",40) 
-      ]
+# Using List
+teams = [("Human Resources", 101),
+         ("Engineering", 102),
+         ("Operations", 103),
+         ("Support", 104)]
 
-deptColumns = ["dept_name","dept_id"]
-deptDF = spark.createDataFrame(data=dept, schema = deptColumns)
-deptDF.printSchema()
-deptDF.show(truncate=False)
+team_columns = ["team_name", "team_id"]
+team_df = spark.createDataFrame(data=teams, schema=team_columns)
+team_df.printSchema()
+team_df.show(truncate=False)
 
-deptSchema = StructType([       
-    StructField('firstname', StringType(), True),
-    StructField('middlename', StringType(), True),
-    StructField('lastname', StringType(), True)
+# Using mismatched schema for demonstration
+employee_schema = StructType([
+    StructField('first_name', StringType(), True),
+    StructField('middle_name', StringType(), True),
+    StructField('last_name', StringType(), True)
 ])
 
-deptDF1 = spark.createDataFrame(data=dept, schema = deptSchema)
-deptDF1.printSchema()
-deptDF1.show(truncate=False)
+employee_df = spark.createDataFrame(data=teams, schema=employee_schema)
+employee_df.printSchema()
+employee_df.show(truncate=False)
 
 # Using list of Row type
-dept2 = [Row("Finance",10), 
-        Row("Marketing",20), 
-        Row("Sales",30), 
-        Row("IT",40) 
-      ]
+teams_row = [Row("Human Resources", 101),
+             Row("Engineering", 102),
+             Row("Operations", 103),
+             Row("Support", 104)]
 
-deptDF2 = spark.createDataFrame(data=dept, schema = deptColumns)
-deptDF2.printSchema()
-deptDF2.show(truncate=False)
+team_df2 = spark.createDataFrame(data=teams_row, schema=team_columns)
+team_df2.printSchema()
+team_df2.show(truncate=False)
 
 # Convert list to RDD
-rdd = spark.sparkContext.parallelize(dept)
-
-
-
+rdd = spark.sparkContext.parallelize(teams)

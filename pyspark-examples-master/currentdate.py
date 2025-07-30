@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 24 22:42:50 2019
 
-@author: prabha
-"""
 
 import pyspark
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-from pyspark.sql.functions import to_timestamp, current_timestamp
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, LongType
+from pyspark.sql.functions import col, to_timestamp, current_timestamp
+from pyspark.sql.types import StructType, StructField, StringType
 
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+# Initialize Spark session
+spark = SparkSession.builder.appName('CitySequenceApp').getOrCreate()
 
-schema = StructType([
-            StructField("seq", StringType(), True)])
+# Define schema
+custom_schema = StructType([
+    StructField("id", StringType(), True)
+])
 
-dates = ['1']
+# Sample data
+sequence_data = ['A']
 
-df = spark.createDataFrame(list('1'), schema=schema)
+# Create DataFrame
+sequence_df = spark.createDataFrame(list('A'), schema=custom_schema)
 
-df.show()
+# Display DataFrame
+sequence_df.show()

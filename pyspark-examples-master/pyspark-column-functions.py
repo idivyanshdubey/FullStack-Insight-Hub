@@ -1,112 +1,87 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
+
 
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+from pyspark.sql.functions import expr, col, when
+from pyspark.sql.types import StructType, StructField, StringType, ArrayType, MapType
 
-data=[("James","Bond","100",None),
-      ("Ann","Varsa","200",'F'),
-      ("Tom Cruise","XXX","400",''),
-      ("Tom Brand",None,"400",'M')] 
-columns=["fname","lname","id","gender"]
-df=spark.createDataFrame(data,columns)
+# Initialize Spark session
+spark = SparkSession.builder.appName('EmployeeInfoApp').getOrCreate()
 
-#alias
-from pyspark.sql.functions import expr
-df.select(df.fname.alias("first_name"), \
-          df.lname.alias("last_name"), \
-          expr(" fname ||','|| lname").alias("fullName") \
-   ).show()
+# Sample data
+records = [("Rohan", "Shah", "101", None),
+           ("Meera", "Joshi", "202", "F"),
+           ("Amit Kumar", "XXX", "303", ""),
+           ("Neel Patel", None, "303", "M")]
 
-#asc, desc
-df.sort(df.fname.asc()).show()
-df.sort(df.fname.desc()).show()
+columns = ["first_name", "last_name", "emp_id", "gender"]
+df = spark.createDataFrame(records, columns)
 
-#cast
-df.select(df.fname,df.id.cast("int")).printSchema()
+# Alias and expression
+df.select(df.first_name.alias("fname"),
+          df.last_name.alias("lname"),
+          expr("first_name || ' ' || last_name").alias("full_name")).show()
 
-#between
-df.filter(df.id.between(100,300)).show()
+# Sorting
+df.sort(df.first_name.asc()).show()
+df.sort(df.first_name.desc()).show()
 
-#contains
-df.filter(df.fname.contains("Cruise")).show()
+# Casting
+df.select(df.first_name, df.emp_id.cast("int")).printSchema()
 
-#startswith, endswith()
-df.filter(df.fname.startswith("T")).show()
-df.filter(df.fname.endswith("Cruise")).show()
+# Between
+df.filter(df.emp_id.between(100, 250)).show()
 
-#eqNullSafe
+# Contains
+df.filter(df.first_name.contains("Kumar")).show()
 
-#isNull & isNotNull
-df.filter(df.lname.isNull()).show()
-df.filter(df.lname.isNotNull()).show()
+# Startswith / Endswith
+df.filter(df.first_name.startswith("N")).show()
+df.filter(df.first_name.endswith("Kumar")).show()
 
-#like , rlike
-df.select(df.fname,df.lname,df.id) \
-  .filter(df.fname.like("%om")) 
+# isNull / isNotNull
+df.filter(df.last_name.isNull()).show()
+df.filter(df.last_name.isNotNull()).show()
 
-#over
+# Like
+df.select(df.first_name, df.last_name, df.emp_id).filter(df.first_name.like("%it")).show()
 
-#substr
-df.select(df.fname.substr(1,2).alias("substr")).show()
+# Substring
+df.select(df.first_name.substr(1, 3).alias("initials")).show()
 
-#when & otherwise
-from pyspark.sql.functions import when
-df.select(df.fname,df.lname,when(df.gender=="M","Male") \
-              .when(df.gender=="F","Female") \
-              .when(df.gender==None ,"") \
-              .otherwise(df.gender).alias("new_gender") \
-    ).show()
+# When / Otherwise
+df.select(df.first_name, df.last_name,
+          when(df.gender == "M", "Male")
+          .when(df.gender == "F", "Female")
+          .when(df.gender == None, "")
+          .otherwise(df.gender).alias("gender_label")).show()
 
-#isin
-li=["100","200"]
-df.select(df.fname,df.lname,df.id) \
-  .filter(df.id.isin(li)) \
-  .show()
+# isin
+id_list = ["101", "202"]
+df.select("first_name", "last_name", "emp_id").filter(df.emp_id.isin(id_list)).show()
 
-from pyspark.sql.types import StructType,StructField,StringType,ArrayType,MapType
-data=[(("James","Bond"),["Java","C#"],{'hair':'black','eye':'brown'}),
-      (("Ann","Varsa"),[".NET","Python"],{'hair':'brown','eye':'black'}),
-      (("Tom Cruise",""),["Python","Scala"],{'hair':'red','eye':'grey'}),
-      (("Tom Brand",None),["Perl","Ruby"],{'hair':'black','eye':'blue'})]
+# Complex types
+nested_data = [
+    (("Rohan", "Shah"), ["Python", "Java"], {"hair": "black", "eye": "brown"}),
+    (("Meera", "Joshi"), [".NET", "SQL"], {"hair": "brown", "eye": "black"}),
+    (("Amit Kumar", ""), ["Scala", "Go"], {"hair": "red", "eye": "grey"}),
+    (("Neel Patel", None), ["Ruby", "Perl"], {"hair": "black", "eye": "blue"})
+]
 
 schema = StructType([
-        StructField('name', StructType([
-            StructField('fname', StringType(), True),
-            StructField('lname', StringType(), True)])),
-        StructField('languages', ArrayType(StringType()),True),
-        StructField('properties', MapType(StringType(),StringType()),True)
-     ])
-df=spark.createDataFrame(data,schema)
-df.printSchema()
-#getItem()
-df.select(df.languages.getItem(1)).show()
+    StructField("full_name", StructType([
+        StructField("first", StringType(), True),
+        StructField("last", StringType(), True)
+    ])),
+    StructField("skills", ArrayType(StringType()), True),
+    StructField("traits", MapType(StringType(), StringType()), True)
+])
 
-df.select(df.properties.getItem("hair")).show()
+df_nested = spark.createDataFrame(nested_data, schema)
+df_nested.printSchema()
 
-#getField from Struct or Map
-df.select(df.properties.getField("hair")).show()
-
-df.select(df.name.getField("fname")).show()
-
-#dropFields
-#from pyspark.sql.functions import col
-#df.withColumn("name1",col("name").dropFields(["fname"])).show()
-
-#withField
-#from pyspark.sql.functions import lit
-#df.withColumn("name",df.name.withField("fname",lit("AA"))).show()
-
-#from pyspark.sql import Row
-#from pyspark.sql.functions import lit
-#df = spark.createDataFrame([Row(a=Row(b=1, c=2))])
-#df.withColumn('a', df['a'].withField('b', lit(3))).select('a.b').show()
-        
-#from pyspark.sql import Row
-#from pyspark.sql.functions import col, lit
-#df = spark.createDataFrame([
-#Row(a=Row(b=1, c=2, d=3, e=Row(f=4, g=5, h=6)))])
-#df.withColumn('a', df['a'].dropFields('b')).show()
-
+# Access array and map elements
+df_nested.select(df_nested.skills.getItem(1)).show()
+df_nested.select(df_nested.traits.getItem("hair")).show()
+df_nested.select(df_nested.traits.getField("hair")).show()
+df_nested.select(df_nested.full_name.getField("first")).show()

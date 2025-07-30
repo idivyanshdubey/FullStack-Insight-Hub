@@ -1,29 +1,38 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
-import pyspark
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, concat_ws
+
+# Initialize Spark session
 spark = SparkSession.builder.master("local[1]") \
-                    .appName('SparkByExamples.com') \
+                    .appName('StudentLanguagesApp') \
                     .getOrCreate()
 
-columns = ["name","languagesAtSchool","currentState"]
-data = [("James,,Smith",["Java","Scala","C++"],"CA"), \
-    ("Michael,Rose,",["Spark","Java","C++"],"NJ"), \
-    ("Robert,,Williams",["CSharp","VB"],"NV")]
+# Sample data
+records = [
+    ("Riya,,Sharma", ["Python", "SQL", "Java"], "TX"),
+    ("Karan,Mehta,", ["Spark", "Python", "JavaScript"], "WA"),
+    ("Neha,,Verma", ["Go", "Rust"], "OR")
+]
 
-df = spark.createDataFrame(data=data,schema=columns)
+# Column names
+columns = ["student_name", "languages_known", "state"]
+
+# Create DataFrame
+df = spark.createDataFrame(data=records, schema=columns)
 df.printSchema()
 df.show(truncate=False)
 
-from pyspark.sql.functions import col, concat_ws
-df2 = df.withColumn("languagesAtSchool",
-   concat_ws(",",col("languagesAtSchool")))
+# Convert array column to comma-separated string
+df2 = df.withColumn("languages_known", concat_ws(",", col("languages_known")))
 df2.printSchema()
 df2.show(truncate=False)
 
-
-df.createOrReplaceTempView("ARRAY_STRING")
-spark.sql("select name, concat_ws(',',languagesAtSchool) as languagesAtSchool,currentState from ARRAY_STRING").show(truncate=False)
+# SQL transformation
+df.createOrReplaceTempView("LANGUAGE_TABLE")
+spark.sql("""
+    SELECT student_name,
+           concat_ws(',', languages_known) AS languages_known,
+           state
+    FROM LANGUAGE_TABLE
+""").show(truncate=False)

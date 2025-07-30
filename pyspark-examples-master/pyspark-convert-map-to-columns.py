@@ -1,42 +1,45 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+from pyspark.sql.functions import explode, map_keys, col
 
-dataDictionary = [
-        ('James',{'hair':'black','eye':'brown'}),
-        ('Michael',{'hair':'brown','eye':None}),
-        ('Robert',{'hair':'red','eye':'black'}),
-        ('Washington',{'hair':'grey','eye':'grey'}),
-        ('Jefferson',{'hair':'brown','eye':''})
-        ]
+# Initialize Spark session
+spark = SparkSession.builder.appName('UserTraitsApp').getOrCreate()
 
-df = spark.createDataFrame(data=dataDictionary, schema = ['name','properties'])
+# Sample data
+user_traits = [
+    ('Riya', {'height': '5.6', 'weight': '60'}),
+    ('Karan', {'height': '5.9', 'weight': None}),
+    ('Neha', {'height': '5.5', 'weight': '55'}),
+    ('Amit', {'height': '6.0', 'weight': '70'}),
+    ('Sara', {'height': '5.7', 'weight': ''})
+]
+
+# Create DataFrame
+df = spark.createDataFrame(data=user_traits, schema=['username', 'traits'])
 df.printSchema()
 df.show(truncate=False)
 
-df3=df.rdd.map(lambda x: \
-    (x.name,x.properties["hair"],x.properties["eye"])) \
-    .toDF(["name","hair","eye"])
-df3.printSchema()
-df3.show()
+# Convert map column to individual columns using RDD
+df_rdd = df.rdd.map(lambda x: (x.username, x.traits["height"], x.traits["weight"]))
+df_rdd_df = df_rdd.toDF(["username", "height", "weight"])
+df_rdd_df.printSchema()
+df_rdd_df.show()
 
-df.withColumn("hair",df.properties.getItem("hair")) \
-  .withColumn("eye",df.properties.getItem("eye")) \
-  .drop("properties") \
+# Extract map values using getItem
+df.withColumn("height", df.traits.getItem("height")) \
+  .withColumn("weight", df.traits.getItem("weight")) \
+  .drop("traits") \
   .show()
 
-df.withColumn("hair",df.properties["hair"]) \
-  .withColumn("eye",df.properties["eye"]) \
-  .drop("properties") \
+# Extract map values using dictionary-style access
+df.withColumn("height", df.traits["height"]) \
+  .withColumn("weight", df.traits["weight"]) \
+  .drop("traits") \
   .show()
 
-# Functions
-from pyspark.sql.functions import explode,map_keys,col
-keysDF = df.select(explode(map_keys(df.properties))).distinct()
-keysList = keysDF.rdd.map(lambda x:x[0]).collect()
-keyCols = list(map(lambda x: col("properties").getItem(x).alias(str(x)), keysList))
-df.select(df.name, *keyCols).show()
+# Dynamically extract all keys from map
+keys_df = df.select(explode(map_keys(df.traits))).distinct()
+keys_list = keys_df.rdd.map(lambda x: x[0]).collect()
+key_columns = [col("traits").getItem(k).alias(k) for k in keys_list]
+df.select(df.username, *key_columns).show()

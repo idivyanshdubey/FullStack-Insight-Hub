@@ -1,57 +1,57 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
-from pyspark.sql import SparkSession,Row
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
 
-data=[("James",23),("Ann",40)]
-df=spark.createDataFrame(data).toDF("name.fname","gender")
+from pyspark.sql import SparkSession, Row
+from pyspark.sql.functions import col
+
+# Initialize Spark session
+spark = SparkSession.builder.appName('UserDataApp').getOrCreate()
+
+# Sample data with dot in column name
+records = [("Rohan", 28), ("Meera", 35)]
+df = spark.createDataFrame(records).toDF("user.name", "age")
 df.printSchema()
 df.show()
 
-from pyspark.sql.functions import col
-df.select(col("`name.fname`")).show()
-df.select(df["`name.fname`"]).show()
-df.withColumn("new_col",col("`name.fname`").substr(1,2)).show()
-df.filter(col("`name.fname`").startswith("J")).show()
-new_cols=(column.replace('.', '_') for column in df.columns)
-df2 = df.toDF(*new_cols)
+# Access column with dot using backticks
+df.select(col("`user.name`")).show()
+df.select(df["`user.name`"]).show()
+df.withColumn("initials", col("`user.name`").substr(1, 2)).show()
+df.filter(col("`user.name`").startswith("R")).show()
+
+# Rename columns to remove dot
+new_columns = (column.replace('.', '_') for column in df.columns)
+df2 = df.toDF(*new_columns)
 df2.show()
 
+# Accessing columns normally
+df.select(df.age).show()
+df.select(df["age"]).show()
+df.select(col("age")).show()
+df.select(col("`user.name`")).show()
 
-# Using DataFrame object
-df.select(df.gender).show()
-df.select(df["gender"]).show()
-#Accessing column name with dot (with backticks)
-df.select(df["`name.fname`"]).show()
+# Struct column example
+nested_data = [
+    Row(user="Rohan", details=Row(hair="black", eye="brown")),
+    Row(user="Meera", details=Row(hair="blonde", eye="blue"))
+]
+df_nested = spark.createDataFrame(nested_data)
+df_nested.printSchema()
 
-#Using SQL col() function
-from pyspark.sql.functions import col
-df.select(col("gender")).show()
-#Accessing column name with dot (with backticks)
-df.select(col("`name.fname`")).show()
+df_nested.select(df_nested.details.hair).show()
+df_nested.select(df_nested["details.hair"]).show()
+df_nested.select(col("details.hair")).show()
+df_nested.select(col("details.*")).show()
 
-#Access struct column
-data=[Row(name="James",prop=Row(hair="black",eye="blue")),
-      Row(name="Ann",prop=Row(hair="grey",eye="black"))]
-df=spark.createDataFrame(data)
-df.printSchema()
+# Column operations
+math_data = [(150, 3, 2), (250, 5, 5), (350, 6, 4)]
+df_math = spark.createDataFrame(math_data).toDF("num1", "num2", "num3")
 
-df.select(df.prop.hair).show()
-df.select(df["prop.hair"]).show()
-df.select(col("prop.hair")).show()
-df.select(col("prop.*")).show()
+df_math.select(df_math.num1 + df_math.num2).show()
+df_math.select(df_math.num1 - df_math.num2).show()
+df_math.select(df_math.num1 * df_math.num2).show()
+df_math.select(df_math.num1 / df_math.num2).show()
+df_math.select(df_math.num1 % df_math.num2).show()
 
-# Column operators
-data=[(100,2,1),(200,3,4),(300,4,4)]
-df=spark.createDataFrame(data).toDF("col1","col2","col3")
-df.select(df.col1 + df.col2).show()
-df.select(df.col1 - df.col2).show() 
-df.select(df.col1 * df.col2).show()
-df.select(df.col1 / df.col2).show()
-df.select(df.col1 % df.col2).show()
-
-df.select(df.col2 > df.col3).show()
-df.select(df.col2 < df.col3).show()
-df.select(df.col2 == df.col3).show()
+df_math.select(df_math.num2 > df_math.num3).show()
+df_math.select(df_math.num2 < df_math.num3).show()
+df_math.select(df_math.num2 == df_math.num3).show()

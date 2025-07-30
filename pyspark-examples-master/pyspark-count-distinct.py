@@ -1,34 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
+
+
 from pyspark.sql import SparkSession
-spark = SparkSession.builder \
-         .appName('SparkByExamples.com') \
-         .getOrCreate()
-
-data = [("James", "Sales", 3000),
-    ("Michael", "Sales", 4600),
-    ("Robert", "Sales", 4100),
-    ("Maria", "Finance", 3000),
-    ("James", "Sales", 3000),
-    ("Scott", "Finance", 3300),
-    ("Jen", "Finance", 3900),
-    ("Jeff", "Marketing", 3000),
-    ("Kumar", "Marketing", 2000),
-    ("Saif", "Sales", 4100)
-  ]
-columns = ["Name","Dept","Salary"]
-df = spark.createDataFrame(data=data,schema=columns)
-df.distinct().show()
-print("Distinct Count: " + str(df.distinct().count()))
-
-# Using countDistrinct()
 from pyspark.sql.functions import countDistinct
-df2=df.select(countDistinct("Dept","Salary"))
+
+# Initialize Spark session
+spark = SparkSession.builder.appName('TeamStatsApp').getOrCreate()
+
+# Sample data
+records = [
+    ("Riya", "HR", 4200),
+    ("Karan", "HR", 5800),
+    ("Neha", "HR", 4200),
+    ("Amit", "Finance", 3100),
+    ("Riya", "HR", 4200),
+    ("Meera", "Finance", 3400),
+    ("John", "Finance", 4000),
+    ("Ali", "Support", 3100),
+    ("Sara", "Support", 2100),
+    ("Raj", "HR", 5800)
+]
+
+columns = ["Employee", "Team", "Income"]
+
+# Create DataFrame
+df = spark.createDataFrame(data=records, schema=columns)
+
+# Show distinct rows
+df.distinct().show()
+print("Distinct Count:", df.distinct().count())
+
+# Count distinct combinations of Team and Income
+df2 = df.select(countDistinct("Team", "Income"))
 df2.show()
+print("Distinct Count of Team & Income:", df2.collect()[0][0])
 
-print("Distinct Count of Department &amp; Salary: "+ str(df2.collect()[0][0]))
-
-df.createOrReplaceTempView("PERSON")
-spark.sql("select distinct(count(*)) from PERSON").show()
+# SQL-based distinct count
+df.createOrReplaceTempView("EMPLOYEES")
+spark.sql("SELECT DISTINCT(COUNT(*)) FROM EMPLOYEES").show()

@@ -1,34 +1,31 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import current_date, current_timestamp, date_format, to_timestamp
 
-# Create SparkSession
-spark = SparkSession.builder \
-               .appName('SparkByExamples.com') \
-               .getOrCreate()
-data=[["1"]]
-df=spark.createDataFrame(data,["id"])
+# Initialize Spark session
+spark = SparkSession.builder.appName('DateTimeDemoApp').getOrCreate()
 
-from pyspark.sql.functions import *
+# Sample data
+data = [["A001"]]
+df = spark.createDataFrame(data, ["record_id"])
 
-#current_date() & current_timestamp()
-df.withColumn("current_date",current_date()) \
-  .withColumn("current_timestamp",current_timestamp()) \
+# Add current date and timestamp
+df.withColumn("today", current_date()) \
+  .withColumn("now", current_timestamp()) \
   .show(truncate=False)
 
-#SQL
-spark.sql("select current_date(), current_timestamp()") \
-     .show(truncate=False)
+# SQL version
+spark.sql("SELECT current_date() AS today, current_timestamp() AS now").show(truncate=False)
 
-# Date & Timestamp into custom format
-df.withColumn("date_format",date_format(current_date(),"MM-dd-yyyy")) \
-  .withColumn("to_timestamp",to_timestamp(current_timestamp(),"MM-dd-yyyy HH mm ss SSS")) \
+# Format date and timestamp
+df.withColumn("formatted_date", date_format(current_date(), "dd-MM-yyyy")) \
+  .withColumn("formatted_timestamp", to_timestamp(current_timestamp(), "dd-MM-yyyy HH:mm:ss")) \
   .show(truncate=False)
 
-#SQL
-spark.sql("select date_format(current_date(),'MM-dd-yyyy') as date_format ," + \
-          "to_timestamp(current_timestamp(),'MM-dd-yyyy HH mm ss SSS') as to_timestamp") \
-     .show(truncate=False)
+# SQL version with formatting
+spark.sql("""
+    SELECT 
+        date_format(current_date(), 'dd-MM-yyyy') AS formatted_date,
+        to_timestamp(current_timestamp(), 'dd-MM-yyyy HH:mm:ss') AS formatted_timestamp
+""").show(truncate=False)

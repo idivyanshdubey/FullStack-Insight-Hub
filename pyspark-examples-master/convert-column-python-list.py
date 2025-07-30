@@ -1,48 +1,55 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
+
+# Create Spark session
 spark = SparkSession.builder.master("local[1]") \
-                    .appName('SparkByExamples.com') \
+                    .appName('ExampleApp') \
                     .getOrCreate()
 
-data = [("James","Smith","USA","CA"),("Michael","Rose","USA","NY"), \
-    ("Robert","Williams","USA","CA"),("Maria","Jones","USA","FL") \
-  ]
-columns=["firstname","lastname","country","state"]
-df=spark.createDataFrame(data=data,schema=columns)
-df.show()
-print(df.collect())
+# Sample data
+records = [("Alice", "Brown", "UK", "London"),
+           ("John", "Doe", "UK", "Manchester"),
+           ("Emma", "Wilson", "UK", "London"),
+           ("Liam", "Taylor", "UK", "Bristol")]
 
-states1=df.rdd.map(lambda x: x[3]).collect()
-print(states1)
-#['CA', 'NY', 'CA', 'FL']
-from collections import OrderedDict 
-res = list(OrderedDict.fromkeys(states1)) 
-print(res)
-#['CA', 'NY', 'FL']
+# Column names
+fields = ["first_name", "last_name", "nation", "city"]
 
+# Create DataFrame
+dataframe = spark.createDataFrame(data=records, schema=fields)
+dataframe.show()
+print(dataframe.collect())
 
-#Example 2
-states2=df.rdd.map(lambda x: x.state).collect()
-print(states2)
-#['CA', 'NY', 'CA', 'FL']
+# Extract city using RDD map
+cities1 = dataframe.rdd.map(lambda row: row[3]).collect()
+print(cities1)
+# ['London', 'Manchester', 'London', 'Bristol']
 
-states3=df.select(df.state).collect()
-print(states3)
-#[Row(state='CA'), Row(state='NY'), Row(state='CA'), Row(state='FL')]
+# Remove duplicates while preserving order
+from collections import OrderedDict
+unique_cities = list(OrderedDict.fromkeys(cities1))
+print(unique_cities)
+# ['London', 'Manchester', 'Bristol']
 
-states4=df.select(df.state).rdd.flatMap(lambda x: x).collect()
-print(states4)
-#['CA', 'NY', 'CA', 'FL']
+# Example 2: Access using attribute
+cities2 = dataframe.rdd.map(lambda row: row.city).collect()
+print(cities2)
+# ['London', 'Manchester', 'London', 'Bristol']
 
-states5=df.select(df.state).toPandas()['state']
-states6=list(states5)
-print(states6)
-#['CA', 'NY', 'CA', 'FL']
+# Example 3: Select column
+cities3 = dataframe.select(dataframe.city).collect()
+print(cities3)
+# [Row(city='London'), Row(city='Manchester'), Row(city='London'), Row(city='Bristol')]
 
-pandDF=df.select(df.state,df.firstname).toPandas()
-print(list(pandDF['state']))
-print(list(pandDF['firstname']))
+# Example 4: FlatMap to extract values
+cities4 = dataframe.select(dataframe.city).rdd.flatMap(lambda row: row).collect()
+print(cities4)
+# ['London', 'Manchester', 'London', 'Bristol']
+
+# Example 5: Convert to Pandas
+cities_pd = dataframe.select(dataframe.city).toPandas()['city']
+cities_list = list(cities_pd)
+print(cities_list)
+# ['London', 'Manchester', 'London', 'Bristol']
+

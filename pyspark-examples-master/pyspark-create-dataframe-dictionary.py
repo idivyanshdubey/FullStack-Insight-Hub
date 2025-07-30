@@ -1,52 +1,55 @@
 # -*- coding: utf-8 -*-
-"""
-author SparkByExamples.com
-"""
 
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.appName('SparkByExamples.com').getOrCreate()
+from pyspark.sql.types import StructField, StructType, StringType, MapType
+from pyspark.sql.functions import explode, map_keys, col
 
-dataDictionary = [
-        ('James',{'hair':'black','eye':'brown'}),
-        ('Michael',{'hair':'brown','eye':None}),
-        ('Robert',{'hair':'red','eye':'black'}),
-        ('Washington',{'hair':'grey','eye':'grey'}),
-        ('Jefferson',{'hair':'brown','eye':''})
-        ]
+# Initialize Spark session
+spark = SparkSession.builder.appName('UserAttributesApp').getOrCreate()
 
-df = spark.createDataFrame(data=dataDictionary, schema = ['name','properties'])
+# Sample data
+user_data = [
+    ('Riya', {'height': '5.6', 'weight': '60'}),
+    ('Karan', {'height': '5.9', 'weight': None}),
+    ('Neha', {'height': '5.5', 'weight': '55'}),
+    ('Amit', {'height': '6.0', 'weight': '70'}),
+    ('Sara', {'height': '5.7', 'weight': ''})
+]
+
+# Create DataFrame with inferred schema
+df = spark.createDataFrame(data=user_data, schema=['username', 'attributes'])
 df.printSchema()
 df.show(truncate=False)
 
-# Using StructType schema
-from pyspark.sql.types import StructField, StructType, StringType, MapType,IntegerType
+# Using StructType schema explicitly
 schema = StructType([
-    StructField('name', StringType(), True),
-    StructField('properties', MapType(StringType(),StringType()),True)
+    StructField('username', StringType(), True),
+    StructField('attributes', MapType(StringType(), StringType()), True)
 ])
-df2 = spark.createDataFrame(data=dataDictionary, schema = schema)
+df2 = spark.createDataFrame(data=user_data, schema=schema)
 df2.printSchema()
 df2.show(truncate=False)
 
-df3=df.rdd.map(lambda x: \
-    (x.name,x.properties["hair"],x.properties["eye"])) \
-    .toDF(["name","hair","eye"])
+# Convert map values to individual columns using RDD
+df3 = df.rdd.map(lambda x: (x.username, x.attributes["height"], x.attributes["weight"])) \
+            .toDF(["username", "height", "weight"])
 df3.printSchema()
 df3.show()
 
-df.withColumn("hair",df.properties.getItem("hair")) \
-  .withColumn("eye",df.properties.getItem("eye")) \
-  .drop("properties") \
+# Extract map values using getItem
+df.withColumn("height", df.attributes.getItem("height")) \
+  .withColumn("weight", df.attributes.getItem("weight")) \
+  .drop("attributes") \
   .show()
 
-df.withColumn("hair",df.properties["hair"]) \
-  .withColumn("eye",df.properties["eye"]) \
-  .drop("properties") \
+# Extract map values using dictionary-style access
+df.withColumn("height", df.attributes["height"]) \
+  .withColumn("weight", df.attributes["weight"]) \
+  .drop("attributes") \
   .show()
 
-# Functions
-from pyspark.sql.functions import explode,map_keys,col
-keysDF = df.select(explode(map_keys(df.properties))).distinct()
-keysList = keysDF.rdd.map(lambda x:x[0]).collect()
-keyCols = list(map(lambda x: col("properties").getItem(x).alias(str(x)), keysList))
-df.select(df.name, *keyCols).show()
+# Dynamically extract all keys from map
+keys_df = df.select(explode(map_keys(df.attributes))).distinct()
+keys_list = keys_df.rdd.map(lambda x: x[0]).collect()
+key_columns = [col("attributes").getItem(k).alias(k) for k in keys_list]
+df.select(df.username, *key_columns).show()
