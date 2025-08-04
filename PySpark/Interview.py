@@ -1,37 +1,48 @@
 import findspark
-import os
-import tempfile
 findspark.init()
 
-from pyspark.sql import SparkSession,Window
-from pyspark.sql.connect.functions import second
-from pyspark.sql.functions import sum,col,udf
-from pyspark.sql.types import StringType
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, add_months, current_date, count
 
-spark=SparkSession.builder.appName("Interview").getOrCreate()
+spark = SparkSession.builder.appName("HandleNulls").getOrCreate()
 
-# data=[("North","2023-01-01","700"), ("North","2024-01-02","400"), ("North","2023-01-03","800"),("South","2023-01-05","300"),("South","2023-01-04","80")]
-# columns = ["region", "date", "sales"]
-
-data_employees = [
-    (1, "Alice Johnson", "2020-05-21", 85000.0, 101),
-    (2, "Bob Smith", "2019-03-15", 65000.0, 102),
-    (3, "Charlie Lee", "2021-07-10", 90000.0, 103),
-    (4, "Diana Prince", "2022-01-05", 87000.0, 101),
-    (5, "Ethan Hunt", "2018-11-30", 72000.0, 104)
+data = [
+    (101, "Bob", "2020-01-15", 75000, 201),
+    (102, "Bob", "2019-03-22", 68000, 202),
+    (103, "Charlie", None, 72000, None),
+    (104, "David", "2021-07-01", None, 201),
+    (105, "Eva", "2022-11-30", 80000, 203),
+    (106, "Frank", "2020-05-18", 69000, 202),
+    (107, None, "2023-02-10", 71000, 203),
+    (108, "Grace", "2018-09-25", None, None),
+    (109, "Hank", None, 67000, 201),
+    (110, "Ivy", "2025-06-05", 73000, 202)
 ]
 
-df = spark.createDataFrame(data_employees,["id","name","joining_date","salary","department_id"])
-
-def mask_name(name):
-    if len(name) <=2:
-        return "*" * len(name)
-    return name[0] + "*" * (len(name) -2) + name[-1]
-
-mask_name_udf = udf(mask_name,StringType())
-
-df_with_masked = df.withColumn("masked_name", mask_name_udf(col("name")))
-df_with_masked.select("name","masked_name").show()
+schema = ["id", "name", "joining_date", "salary", "manager_id"]
+df = spark.createDataFrame(data, schema=schema)
+df.show()
 
 
+df_final = df.where("salary > 50000")
+df_final.show()
 
+print(df_final.rdd.getNumPartitions())
+
+df_final.write.format("csv").save("data/output.csv")
+
+# recent_employees = df.filter(col("joining_date") >= add_months(current_date(), -3))
+#
+# recent_employees.select("name", "joining_date").show()
+#
+# duplicate_names = df.groupBy("name").agg(count("*").alias("occurrences")).filter("occurrences > 1")
+#
+# duplicate_names.show()
+
+#
+# emp_mgr = df.alias("e").join(df.alias("m"), col("e.manager_id") == col("m.id"), "left") \
+#             .select(col("e.name").alias("employee_name"), col("m.name").alias("manager_name"))
+#
+# emp_mgr.show()
+#
+#
